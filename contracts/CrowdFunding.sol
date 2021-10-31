@@ -15,22 +15,22 @@ struct Contributor {
     uint                _amount;
 }
 
-contract CrowdFunding {
-    enum State{
-        NotFunded,
-        Funded
-    }
+contract Owned {
+    address internal immutable owner;
+    constructor() {owner = msg.sender;}
     
-    address immutable private                   owner;
+    modifier onlyOwner {
+        require(msg.sender == owner, "Only owner allowed!");
+        _;
+    }
+}
+
+contract CrowdFunding is Owned {
+    enum State { NotFunded, Funded }
+    
     uint immutable private                      fundingGoal;
     State private                               state;
     mapping (address => Contributor) private    contributors;
-    
-    
-    modifier onlyOwner {
-        require(msg.sender == owner, "Only owner!");
-        _;
-    }
     
     modifier onlyContributors {
         require(contributors[msg.sender]._amount > 0, "Only contributors allowed!");
@@ -47,7 +47,6 @@ contract CrowdFunding {
     //DistributeFunding dsFunding;
     
     constructor (uint64 _fundingGoal){
-        owner = msg.sender;
         fundingGoal = _fundingGoal;
         state = State.NotFunded;
         //dsFunding = new DistributeFunding(address(this));
@@ -98,6 +97,8 @@ contract CrowdFunding {
         contributors[msg.sender]._amount -= amount;
         
     }
+    
+    // default receive fn -> ar trebui definita (only sponsor)
     
     // Sponsors
     function becomeSponsor(Sponsor calldata s) external {} // adds sponsor
