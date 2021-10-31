@@ -2,22 +2,18 @@
 
 pragma solidity >=0.8.0 <=0.8.7;
 
+import "./SponsorFunding.sol";
+import "./DistributeFunding.sol";
+
 struct Person{
     string name;
     string pAddress;
 }
 
-struct Sponsor{
-    address sAddress;
-}
-
 contract CrowdFunding{
+    address private owner;
+    
     uint64 private fundingGoal;
-    
-    // maping <address, Person>
-    uint64 private currentFunds;
-    
-    // maping <address, Sponsor>
     
     enum State{
         NotFunded,
@@ -26,10 +22,28 @@ contract CrowdFunding{
     
     State state;
     
+    mapping (address=> Person) contributors;
+    uint64 private currentFunds;
+    
+    Sponsor sponsor;
+    
+    DistributeFunding dsFunding;
+    
     constructor(uint64 fGoal){
+        owner = msg.sender;
         fundingGoal = fGoal;
+        dsFunding = new DistributeFunding(address(this));
     }
     
+    // State
+    function status() public returns(string memory) {} // gets state
+    
+    function finishFunding() private {
+        // announces sponsor
+        // sends money to distribute funding
+    }
+    
+    // Contributors
     function contribute(Person calldata p) public{
         //valoare din amount.value 
     }
@@ -38,7 +52,6 @@ contract CrowdFunding{
         //retracts contribution    
     } 
     
-    function status() public returns(string memory) {} // gets state
-    
-    function becomeSponsor() public {} // adds sponsor
+    // Sponsors
+    function becomeSponsor(Sponsor calldata s) public {} // adds sponsor
 }

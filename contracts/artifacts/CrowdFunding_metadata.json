@@ -97,11 +97,19 @@
 	},
 	"sources": {
 		"contracts/CrowdFunding.sol": {
-			"keccak256": "0x61c2e541af60176a064d2a3dd3f387d1156b8342f74e2550c513c5dd2d2993df",
+			"keccak256": "0x2c78e7c79d7e620badc33533ab5a448e7f8f739b16635ea24198b8ae308e87e4",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://4af3dbaf4283a145cae20b22ca50536211434152c1e4877ed4cc867db137a306",
-				"dweb:/ipfs/QmT2cqmEvcLn2stTcH35pYbfDRNaot5LGDo1doifXCEiPi"
+				"bzz-raw://5fde215285b4c9ebc2c3510dc08b38a60493e1ce137f4cab802e787f8c69b837",
+				"dweb:/ipfs/Qmf7tyUypRSkUUfeVFak3495AWZvVn3xNueAQYvifw4rYM"
+			]
+		},
+		"contracts/SponsorFunding.sol": {
+			"keccak256": "0x27419acd4cf1123da785fb6ebb2ca0e8bb3f712815aa772941dabbeb957add83",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://c09b1d6e541f8240e73e44e8829b092af035f8a0e7a4459cb3e7d8252b3dda8b",
+				"dweb:/ipfs/QmXSU378qB3MprmXAdz9SbN7QFrLJBsUq18SZLJ8jUFPc9"
 			]
 		}
 	},
