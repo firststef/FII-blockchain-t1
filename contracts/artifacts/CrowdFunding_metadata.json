@@ -9,7 +9,7 @@
 				"inputs": [
 					{
 						"internalType": "uint64",
-						"name": "fGoal",
+						"name": "_fundingGoal",
 						"type": "uint64"
 					}
 				],
@@ -17,8 +17,28 @@
 				"type": "constructor"
 			},
 			{
-				"inputs": [],
+				"inputs": [
+					{
+						"components": [
+							{
+								"internalType": "address",
+								"name": "sAddress",
+								"type": "address"
+							}
+						],
+						"internalType": "struct Sponsor",
+						"name": "s",
+						"type": "tuple"
+					}
+				],
 				"name": "becomeSponsor",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "communicateFundingGoalReached",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -29,35 +49,23 @@
 						"components": [
 							{
 								"internalType": "string",
-								"name": "name",
-								"type": "string"
-							},
-							{
-								"internalType": "string",
-								"name": "pAddress",
+								"name": "_name",
 								"type": "string"
 							}
 						],
-						"internalType": "struct Person",
-						"name": "p",
+						"internalType": "struct ContribuitorData",
+						"name": "_data",
 						"type": "tuple"
 					}
 				],
-				"name": "contribute",
+				"name": "contributeFunds",
 				"outputs": [],
-				"stateMutability": "nonpayable",
+				"stateMutability": "payable",
 				"type": "function"
 			},
 			{
 				"inputs": [],
-				"name": "retract",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "status",
+				"name": "getStatus",
 				"outputs": [
 					{
 						"internalType": "string",
@@ -65,6 +73,19 @@
 						"type": "string"
 					}
 				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					}
+				],
+				"name": "withdrawFunds",
+				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
 			}
@@ -97,19 +118,27 @@
 	},
 	"sources": {
 		"contracts/CrowdFunding.sol": {
-			"keccak256": "0x2c78e7c79d7e620badc33533ab5a448e7f8f739b16635ea24198b8ae308e87e4",
+			"keccak256": "0xf120d7eb382abe57e243f0c0b6ae07a091a4e38804856a221929654f8024f616",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://5fde215285b4c9ebc2c3510dc08b38a60493e1ce137f4cab802e787f8c69b837",
-				"dweb:/ipfs/Qmf7tyUypRSkUUfeVFak3495AWZvVn3xNueAQYvifw4rYM"
+				"bzz-raw://cc303f14eae53dbeb14e69f5fa9f5ce1dd86f076c9303a4ac08b4835df9249b5",
+				"dweb:/ipfs/QmaVtkeY4E58E7HaP8URSQyayn7FBbCmAJooooghHK4n1P"
+			]
+		},
+		"contracts/DistributeFunding.sol": {
+			"keccak256": "0x90655e3304cee3d051811b9d0add62c6fb7abb00e0f3c880319879e8e03dfcb6",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://8621707108b000a394fb6d7a6c7c64c3b26b6db634568a9f0353dc656ee662d3",
+				"dweb:/ipfs/QmcuaWB8u1uQuLnf9ND6tiyBZvYe3hKgNTZwf2BjKYpotC"
 			]
 		},
 		"contracts/SponsorFunding.sol": {
-			"keccak256": "0x27419acd4cf1123da785fb6ebb2ca0e8bb3f712815aa772941dabbeb957add83",
+			"keccak256": "0xd8b7ffe43aebd19f9f58b4fa864e882728e42698ad8392666926b4425f42ba58",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://c09b1d6e541f8240e73e44e8829b092af035f8a0e7a4459cb3e7d8252b3dda8b",
-				"dweb:/ipfs/QmXSU378qB3MprmXAdz9SbN7QFrLJBsUq18SZLJ8jUFPc9"
+				"bzz-raw://365c3562078767e77efc6eda3cfaf06764e7eff3d1c8cc382a870047257ad0c0",
+				"dweb:/ipfs/QmNexQ4eTVcawkBLZk3NRLYSwnvqn7QG2h2qbUJbwGnjeQ"
 			]
 		}
 	},
