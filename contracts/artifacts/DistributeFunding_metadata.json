@@ -4,7 +4,37 @@
 	},
 	"language": "Solidity",
 	"output": {
-		"abi": [],
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "cfAddress",
+						"type": "address"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "add",
+						"type": "address"
+					},
+					{
+						"internalType": "uint64",
+						"name": "share",
+						"type": "uint64"
+					}
+				],
+				"name": "setFundees",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
 		"devdoc": {
 			"kind": "dev",
 			"methods": {},
@@ -32,12 +62,28 @@
 		"remappings": []
 	},
 	"sources": {
-		"contracts/DistributeFunding.sol": {
-			"keccak256": "0x08cb8f759334dc104fcdabc98925279587cab0028353f356ea3b15a0fef0e32a",
+		"contracts/CrowdFunding.sol": {
+			"keccak256": "0x4bbb9427ebd05048baa7f4aa0e8cc420b088b8492c950fb3f14d8d4735df8ff8",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://540e019ac15ffb975067a53967bc1c6d99d13ab63d66aa8336c92e658a260936",
-				"dweb:/ipfs/QmNN9SYHrBpGtrFzUe7a81cnTtETLcRg8CpkD8gx6eFFhA"
+				"bzz-raw://a22560f78f235bfcd5a00eb42f0765b395a343157b5ecd6ce23ffa7be2e2c32b",
+				"dweb:/ipfs/QmUN5KmV2jFC9Svte2WWe8JargokkgJWwKUgwmxU6LUNeD"
+			]
+		},
+		"contracts/DistributeFunding.sol": {
+			"keccak256": "0x90655e3304cee3d051811b9d0add62c6fb7abb00e0f3c880319879e8e03dfcb6",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://8621707108b000a394fb6d7a6c7c64c3b26b6db634568a9f0353dc656ee662d3",
+				"dweb:/ipfs/QmcuaWB8u1uQuLnf9ND6tiyBZvYe3hKgNTZwf2BjKYpotC"
+			]
+		},
+		"contracts/SponsorFunding.sol": {
+			"keccak256": "0x87e1c9de234b60c37aa07fb87b3fe23e64b93ead8e80e466e5bca6b582e91d32",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://35472d3975cb574785455c576fa60d5593ffdb24bdca9d6877eeecee9dee47b5",
+				"dweb:/ipfs/QmRdAJLit1w68hR75bLkz1qDEvBgDMwsyxZpntPM8qNgKz"
 			]
 		}
 	},

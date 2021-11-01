@@ -43,10 +43,10 @@ contract CrowdFunding is Owned {
         _;
     }
     
-    //Sponsor sponsor;
+    SponsorFunding sponsor;
     //DistributeFunding dsFunding;
     
-    constructor (uint64 _fundingGoal){
+    constructor (uint64 _fundingGoal){ 
         fundingGoal = _fundingGoal;
         state = State.NotFunded;
         //dsFunding = new DistributeFunding(address(this));
@@ -60,12 +60,22 @@ contract CrowdFunding is Owned {
         return state == State.NotFunded ? "NotFunded" : "Funded";
     }
     
+    function getFundingGoal()
+        public
+        view
+        returns(uint) {
+        return fundingGoal;        
+    }
+    
     // anunta SponsorFunding ca a atins goalul
     function communicateFundingGoalReached() 
         external
         onlyOwner 
         onlyState(State.Funded) {
         // announce sponsor
+        // the following call will transfer the funds to this contract
+        // `sponsor.finalizeSponsorship();`
+        
         // sends money to distribute funding
     }
     
@@ -75,12 +85,12 @@ contract CrowdFunding is Owned {
         payable 
         onlyState(State.NotFunded) {
             
-        require(address(this).balance /*+ get sponsorship money*/ <= fundingGoal);
+        require(address(this).balance + sponsor.getSponsorshipValue() <= fundingGoal);
         
         contributors[msg.sender]._data = _data;
         contributors[msg.sender]._amount += msg.value;
         
-        if(address(this).balance /*get sponsorship money*/ >= fundingGoal) {
+        if(address(this).balance + sponsor.getSponsorshipValue() >= fundingGoal) {
             state = State.Funded;
         }
     }
@@ -98,9 +108,26 @@ contract CrowdFunding is Owned {
         
     }
     
-    // default receive fn -> ar trebui definita (only sponsor)
-    
+
     // Sponsors
-    function becomeSponsor(Sponsor calldata s) external {} // adds sponsor
+
+    function becomeSponsor(address sfAddress) 
+        external 
+    {
+        // the `receive` function is used as a fallback function when no calldata id provided so, I defined a 
+        // separate function to receive funds from the sponse
+        
+        // todo: register sponsor
+        // req: only one sponsor
+        
+    }
+    
+    function receiveFunds()
+        public
+        payable
+    {
+        // todo: receiveFunds 
+        // todo: emit events for debug purposes
+    }
     
 }
