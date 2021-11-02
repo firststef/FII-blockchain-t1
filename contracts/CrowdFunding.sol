@@ -4,6 +4,7 @@ pragma solidity >=0.8.0 <=0.8.7;
 
 import "./SponsorFunding.sol";
 import "./DistributeFunding.sol";
+import "./Owned.sol";
 
 struct ContribuitorData {
     string _name;
@@ -15,21 +16,11 @@ struct Contributor {
     uint                _amount;
 }
 
-contract Owned {
-    address internal immutable owner;
-    constructor() {owner = msg.sender;}
-    
-    modifier onlyOwner {
-        require(msg.sender == owner, "Only owner allowed!");
-        _;
-    }
-}
-
 contract CrowdFunding is Owned {
     enum State { NotFunded, Funded }
+    State public                               state;
     
     uint immutable private                      fundingGoal;
-    State private                               state;
     mapping (address => Contributor) private    contributors;
     
     modifier onlyContributors {
@@ -44,12 +35,12 @@ contract CrowdFunding is Owned {
     }
     
     SponsorFunding sponsor;
-    //DistributeFunding dsFunding;
+    DistributeFunding dsFunding;
     
     constructor (uint64 _fundingGoal){ 
         fundingGoal = _fundingGoal;
         state = State.NotFunded;
-        //dsFunding = new DistributeFunding(address(this));
+        dsFunding = new DistributeFunding(address(this));
     }
     
     // get Funding status
@@ -66,6 +57,13 @@ contract CrowdFunding is Owned {
         returns(uint) {
         return fundingGoal;        
     }
+     
+    function getDistribute() 
+        public 
+        view 
+        returns(address){
+        return address(dsFunding);
+    }
     
     // anunta SponsorFunding ca a atins goalul
     function communicateFundingGoalReached() 
@@ -77,6 +75,7 @@ contract CrowdFunding is Owned {
         // `sponsor.finalizeSponsorship();`
         
         // sends money to distribute funding
+        dsFunding.distributeFunds();
     }
     
     // Contributors
@@ -130,4 +129,9 @@ contract CrowdFunding is Owned {
         // todo: emit events for debug purposes
     }
     
+    // Begin distribution
+    function transferToDistribute() public payable {
+        require(msg.sender == address(dsFunding), "Only distribute funding can access this");
+        payable(address(dsFunding)).transfer(fundingGoal);
+    }
 }
