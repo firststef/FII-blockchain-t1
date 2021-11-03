@@ -35,8 +35,8 @@ contract DistributeFunding{
     function distributeFunds() public payable {
         require(msg.sender == address(cfContract), "Only CrowdFunding can init distribution");
         require(state == State.Initialized, "DistributeFunding has not been fully initialized");
+        require(msg.value > 0, "Invalid balance");
         state = State.Finished;
-        cfContract.transferToDistribute();
         for (uint32 i = 0; i < fundees.length; i++){
             uint256 money = cfContract.getFundingGoal() * fundees[i].share / 100; 
             fundees[i].fAddress.transfer(money);

@@ -6,20 +6,13 @@ import "./SponsorFunding.sol";
 import "./DistributeFunding.sol";
 import "./Owned.sol";
 
-struct ContribuitorData {
-    string _name;
-    // mai adaugam noi aici..
-}
-
 struct SponsorData {
     SponsorFunding sponsor;
-    uint sponsorshipValue;
-    bool haveSponsor;
     bool sponsorshipReceived;
 }
 
 struct Contributor {
-    ContribuitorData    _data;
+    string              _name;
     uint                _amount;
 }
 
@@ -36,49 +29,62 @@ contract CrowdFunding is Owned {
     SponsorData         sponsorData;
     DistributeFunding   dsFunding;
     
-    modifier onlyContributors {
+    modifier onlyContributors 
+    {
         require(contributors[msg.sender]._amount > 0, "Only contributors allowed!");
         _;
     }
     
-    modifier onlyState(State _state) {
+    modifier onlyState(State _state) 
+    {
         require(state == _state, 
                 state == State.NotFunded ? "Funding in progress!" : "Funding ended!");
         _;
     }
     
-    constructor (uint64 _fundingGoal){ 
-        fundingGoal = _fundingGoal;
-        state       = State.NotFunded;
-        dsFunding   = new DistributeFunding(address(this));
+    modifier haveSponsor(bool expected)
+    {
+        require((address(sponsorData.sponsor) == address(0)) == !expected, "Sponsor unexpected!");
+        _;
+    }
+    
+    constructor (uint64 _fundingGoal)
+    { 
+        fundingGoal         = _fundingGoal;
+        state               = State.NotFunded;
+        dsFunding           = new DistributeFunding(address(this));
     }
     
     // get Funding status
     function getStatus() 
         public 
         view
-        returns(string memory) {
+        returns(string memory)
+    {
         return state == State.NotFunded ? "NotFunded" : "Funded";
     }
     
     function getFundingGoal()
         public
         view
-        returns(uint) {
+        returns(uint) 
+    {
         return fundingGoal;        
     }
     
     function getBalance()
         public
         view
-        returns(uint) {
+        returns(uint) 
+    {
             return address(this).balance;
         }
      
     function getDistribute() 
         public 
         view 
-        returns(address){
+        returns(address)
+    {
         return address(dsFunding);
     }
     
@@ -86,31 +92,24 @@ contract CrowdFunding is Owned {
     function communicateFundingGoalReached() 
         external
         onlyOwner 
-        onlyState(State.Funded) {
-        
-        
-        require(sponsorData.haveSponsor, "No sponsor!");
+        onlyState(State.Funded)
+        haveSponsor(true) 
+    {
         sponsorData.sponsor.finalizeSponsorship();
-        // announce sponsor
-        // the following call will transfer the funds to this contract
-        // `sponsor.finalizeSponsorship();`
-        
-        // sends money to distribute funding
-        //dsFunding.distributeFunds();
     }
     
     // Contributors
-    function contributeFunds(ContribuitorData calldata _data) 
+    function contributeFunds(string memory _name) 
         external 
         payable 
-        onlyState(State.NotFunded) {
-            
-        require(address(this).balance + sponsorData.sponsorshipValue <= fundingGoal);
+        onlyState(State.NotFunded) 
+    {
+        require(address(this).balance + sponsorData.sponsor.getSponsorshipValue() <= fundingGoal);
         
-        contributors[msg.sender]._data = _data;
+        contributors[msg.sender]._name = _name;
         contributors[msg.sender]._amount += msg.value;
         
-        if(address(this).balance + sponsorData.sponsorshipValue >= fundingGoal) {
+        if(address(this).balance + sponsorData.sponsor.getSponsorshipValue() >= fundingGoal) {
             state = State.Funded;
         }
     }
@@ -118,43 +117,39 @@ contract CrowdFunding is Owned {
     function withdrawFunds(uint amount) 
         external
         onlyContributors
-        onlyState(State.NotFunded) {
-            
+        onlyState(State.NotFunded) 
+    {
         require((amount != 0) && (contributors[msg.sender]._amount >= amount),
-                "Invalid amount!");
+            "Invalid amount!");
         
         payable(msg.sender).transfer(amount);
         contributors[msg.sender]._amount -= amount;
-        
     }
     
-
     // Sponsors
 
     function becomeSponsor(address _address) 
         external
         onlyState(State.NotFunded)
+        haveSponsor(false)
     {
-        require(sponsorData.haveSponsor == false, "Already has a sponsor");
+        // this method is called inside SponsorFunding constructor
+        // which means that the contract abi is unavailable 
+        
         sponsorData.sponsor = SponsorFunding(_address);
-        sponsorData.sponsorshipValue = sponsorData.sponsor.getSponsorshipValue();
-        sponsorData.haveSponsor = true;
-        // the `receive` function is used as a fallback function when no calldata id provided so, I defined a 
-        // separate function to receive funds from the sponse
+        sponsorData.sponsorshipReceived = false;
         
-        // todo: register sponsor
-        // req: only one sponsor
-        
+        // todo: check if sponsorship value is not 0
     }
     
     function receiveSponsorshipFunds()
         public
         payable
-        onlyState(State.Funded)
+        onlyState(State.Funded) 
+        haveSponsor(true)
     {
-        require(sponsorData.haveSponsor, "No sponsor!");
         require(msg.sender == address(sponsorData.sponsor), "Only sponsor allowed");
-        require(msg.value == sponsorData.sponsorshipValue);
+        require(msg.value == sponsorData.sponsor.getSponsorshipValue());
         
         assert(address(this).balance >= fundingGoal);
         
@@ -165,14 +160,13 @@ contract CrowdFunding is Owned {
     //fallback() external payable { revert("Invalid operation!"); }
     
     // Begin distribution
-    function transferToDistribute() 
-    external
-    onlyState(State.Funded)
-    payable 
+    function distribute() 
+        external
+        onlyState(State.Funded)
+        onlyOwner
+        payable 
     {
-        // only owner of CrowdFunding should send funds to ds;
         require(address(this).balance >= fundingGoal); //make sure SponsorshipReceived
-        require(msg.sender == address(dsFunding), "Only distribute funding can access this");
-        payable(address(dsFunding)).transfer(fundingGoal);
+        dsFunding.distributeFunds{value:address(this).balance}();
     }
 }
