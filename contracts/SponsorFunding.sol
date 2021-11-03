@@ -48,9 +48,11 @@ contract SponsorFunding{
         require(msg.sender == address(cfContract), "Caller is not the CrowdFunding contract!");
         require(str_equal(cfContract.getStatus(), "Founded"), "CrowdFunding goal not reached");
         
-        address payable destination_address = payable(address(cfContract));
-        bool sent = destination_address.send(sponsorshipValue);
-        require(sent, "Something went wrong! Failed to send sponsorship value!");
+        //address payable destination_address = payable(address(cfContract));
+        //bool sent = destination_address.send(sponsorshipValue);
+        //require(sent, "Something went wrong! Failed to send sponsorship value!");
+        
+        cfContract.receiveSponsorshipFunds{value:sponsorshipValue}();
     }
     
     function getSponsorshipValue() 
