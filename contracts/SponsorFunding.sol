@@ -19,7 +19,7 @@ contract SponsorFunding{
         
         sponsorshipValue = msg.value;
         cfContract = cf;
-        cfContract.becomeSponsor(address(this));
+        cfContract.becomeSponsor(address(this), sponsorshipValue);
     }
     
     function mem_equal(bytes memory a, bytes memory b) 
