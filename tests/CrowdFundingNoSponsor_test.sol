@@ -62,7 +62,7 @@ contract CrowdFundingSimpleTestScenario {
         
         cf.distribute();
         
-        Assert.greaterThan(account_0.balance, accountBalance_0, "");
-        Assert.greaterThan(account_1.balance, accountBalance_1, "");
+        Assert.equal(account_0.balance - accountBalance_0, 250, "");
+        Assert.equal(account_1.balance - accountBalance_1, 250, "");
     }
 }
