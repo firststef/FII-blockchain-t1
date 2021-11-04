@@ -186,7 +186,6 @@ contract CrowdFunding is Owned {
         external
         onlyState(State.Funded)
         onlyOwner
-        payable 
     {
         require(address(this).balance >= fundingGoal); //make sure SponsorshipReceived
         dsFunding.distributeFunds{value:address(this).balance}();
