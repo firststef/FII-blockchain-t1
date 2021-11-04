@@ -52,7 +52,7 @@ contract CrowdFunding is Owned {
     { 
         fundingGoal         = _fundingGoal;
         state               = State.NotFunded;
-        dsFunding           = new DistributeFunding(address(this));
+        dsFunding           = new DistributeFunding(payable(address(this)));
     }
     
     // get Funding status
@@ -101,15 +101,20 @@ contract CrowdFunding is Owned {
     // Contributors
     function contributeFunds(string memory _name) 
         external 
-        payable 
+        payable
         onlyState(State.NotFunded) 
     {
-        require(address(this).balance + sponsorData.sponsor.getSponsorshipValue() <= fundingGoal);
+        uint sponsorshipAmount = 0;
+        if(address(sponsorData.sponsor) != address(0)){
+            sponsorshipAmount = sponsorData.sponsor.getSponsorshipValue();
+        }
+        
+        require(address(this).balance + sponsorshipAmount <= fundingGoal, "Invalid ammount!");
         
         contributors[msg.sender]._name = _name;
         contributors[msg.sender]._amount += msg.value;
         
-        if(address(this).balance + sponsorData.sponsor.getSponsorshipValue() >= fundingGoal) {
+        if(address(this).balance + sponsorshipAmount >= fundingGoal) {
             state = State.Funded;
         }
     }
@@ -135,7 +140,6 @@ contract CrowdFunding is Owned {
     {
         // this method is called inside SponsorFunding constructor
         // which means that the contract abi is unavailable 
-        
         sponsorData.sponsor = SponsorFunding(_address);
         sponsorData.sponsorshipReceived = false;
         
@@ -156,8 +160,8 @@ contract CrowdFunding is Owned {
         emit SponsorshipReceived(msg.sender, msg.value);
     }
     
-    //receive() external payable { revert("Invalid operation!"); }
-    //fallback() external payable { revert("Invalid operation!"); }
+    receive() external payable { revert("Invalid operation!"); }
+    fallback() external payable { revert("Invalid operation!"); }
     
     // Begin distribution
     function distribute() 

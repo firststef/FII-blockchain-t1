@@ -13,8 +13,6 @@ contract CrowdFundingSimpleTestScenario {
    
     struct ScenarioParameters {
         uint64 fundingGoal;
-        uint sponsorshipPercentage;
-        uint sponsorInitialBalance;
     }
     
     ScenarioParameters scenario;
@@ -29,9 +27,7 @@ contract CrowdFundingSimpleTestScenario {
         Assert.equal(address(cf), address(0), "invalid init");
         Assert.equal(address(sf), address(0), "invalid init");
         
-        scenario.fundingGoal = 1000;
-        scenario.sponsorshipPercentage = 50;
-        scenario.sponsorInitialBalance = 500;
+        scenario.fundingGoal = 500;
     }
     
     /// #sender: account-0
@@ -40,7 +36,6 @@ contract CrowdFundingSimpleTestScenario {
         Assert.greaterThan(msg.value, uint(0), "internal error");
 
         cf = new CrowdFunding(scenario.fundingGoal);
-        sf = new SponsorFunding{value:500}(payable(address(cf)), scenario.sponsorshipPercentage);
         
         cf.contributeFunds{value:250}("alfa");
         cf.contributeFunds{value:250}("beta");
@@ -52,7 +47,7 @@ contract CrowdFundingSimpleTestScenario {
         // contributor._name = "theta";
         // cf.contributeFunds{value:250}(contributor);
         
-        cf.communicateFundingGoalReached();
+        //cf.communicateFundingGoalReached();
         
         DistributeFunding df = DistributeFunding(cf.getDistribute());
         

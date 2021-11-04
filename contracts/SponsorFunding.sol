@@ -8,7 +8,7 @@ contract SponsorFunding{
     CrowdFunding internal cfContract;
     uint internal sponsorshipValue;
     
-    constructor(address cfAddress, uint percentageValue) 
+    constructor(address payable cfAddress, uint percentageValue) 
         payable 
     {
         CrowdFunding cf = CrowdFunding(cfAddress);
@@ -43,6 +43,7 @@ contract SponsorFunding{
     {
         require(msg.sender == address(cfContract), "Caller is not the CrowdFunding contract!");
         require(str_equal(cfContract.getStatus(), "Funded"), "CrowdFunding goal not reached");
+        require((address(cfContract).balance + sponsorshipValue) >= cfContract.getFundingGoal());
         
         cfContract.receiveSponsorshipFunds{value:sponsorshipValue}();
     }

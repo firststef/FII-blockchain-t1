@@ -18,15 +18,18 @@ contract DistributeFunding{
     Fundee[] fundees;
     uint32 progressShare;
         
-    constructor(address cfAddress) {
+    constructor(address payable cfAddress) {
         cfContract = CrowdFunding(cfAddress);
     }
     
     function setFundee(address payable add, uint32 share) public {
         require(cfContract.checkOwner(msg.sender), "Only owner can set fundees");
         require(state == State.NotInitialized, "DistributeFunding has to be not initialized");
+        require(progressShare + share <= 100, "Invalid share percentage!");
+        
         fundees.push(Fundee(add, share));
         progressShare += share;
+        
         if (progressShare == 100){
             state = State.Initialized;
         }
