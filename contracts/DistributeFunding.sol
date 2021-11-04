@@ -15,7 +15,7 @@ contract DistributeFunding{
     
     CrowdFunding cfContract;
     
-    Fundee[] fundees;
+    Fundee[] private fundees;
     uint32 progressShare;
         
     constructor(address payable cfAddress) {
@@ -44,5 +44,9 @@ contract DistributeFunding{
             uint256 money = cfContract.getFundingGoal() * fundees[i].share / 100; 
             fundees[i].fAddress.transfer(money);
         }
+    }
+    
+    function get_fundees() public view returns(Fundee[] memory){
+        return fundees;
     }
 }

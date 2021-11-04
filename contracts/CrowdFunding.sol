@@ -104,6 +104,8 @@ contract CrowdFunding is Owned {
         payable
         onlyState(State.NotFunded) 
     {
+        require(msg.value > 0, "You cannot contribute with none value");
+        
         uint sponsorshipAmount = 0;
         if(address(sponsorData.sponsor) != address(0)){
             sponsorshipAmount = sponsorData.sponsor.getSponsorshipValue();
